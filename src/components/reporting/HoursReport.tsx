@@ -24,7 +24,7 @@ export const HoursReport: React.FC = () => {
     const date = new Date(selectedDate)
     const entriesForDate = timeEntries.filter(
       entry => format(entry.date, 'yyyy-MM-dd') === selectedDate
-    )
+    ).reverse()
 
     const data: HoursReportData = {
       date,

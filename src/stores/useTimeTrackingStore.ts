@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { TimeEntry, Break } from '../types'
+import type { TimeEntry } from '../types'
 import { timeEntryRepository } from '../lib/repositories'
 import { DEFAULT_USER_ID } from '../lib/db'
 import { calculateDuration, calculateBreakDuration, calculateBillableHours, createBreak, endBreak } from '../lib/utils/timeUtils'

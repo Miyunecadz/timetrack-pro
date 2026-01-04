@@ -20,7 +20,7 @@ export class TaskRepository {
 
     return await db.tasks
       .where('userId').equals(userId)
-      .and(t => t.status === TaskStatus.COMPLETED && t.completedOn && t.completedOn >= start && t.completedOn <= end && !t.deletedAt)
+      .and(t => t.status === TaskStatus.COMPLETED && t.completedOn !== null && t.completedOn >= start && t.completedOn <= end && t.deletedAt === null)
       .toArray()
   }
 
@@ -30,7 +30,7 @@ export class TaskRepository {
 
     return await db.tasks
       .where('userId').equals(userId)
-      .and(t => t.status === TaskStatus.COMPLETED && t.completedOn && t.completedOn >= startDay && t.completedOn <= endDay && !t.deletedAt)
+      .and(t => t.status === TaskStatus.COMPLETED && t.completedOn !== null && t.completedOn >= startDay && t.completedOn <= endDay && t.deletedAt === null)
       .toArray()
   }
 
@@ -54,10 +54,10 @@ export class TaskRepository {
     return await db.tasks
       .where('userId').equals(userId)
       .filter(t =>
-        !t.deletedAt && (
+        t.deletedAt === null && (
           t.description.toLowerCase().includes(lowerQuery) ||
           t.enhancedDescription.toLowerCase().includes(lowerQuery) ||
-          t.ticketNumber?.includes(query)
+          (t.ticketNumber?.includes(query) ?? false)
         )
       )
       .toArray()

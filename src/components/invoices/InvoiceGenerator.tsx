@@ -20,7 +20,7 @@ import {
   type BankInfo
 } from '../../lib/utils/pdfGenerator'
 import { format, startOfMonth, endOfMonth } from 'date-fns'
-import { Calculator, Download, Settings as SettingsIcon } from 'lucide-react'
+import { Calculator, Download } from 'lucide-react'
 
 export const InvoiceGenerator: React.FC = () => {
   const { timeEntries, loadTimeEntries } = useTimeTrackingStore()

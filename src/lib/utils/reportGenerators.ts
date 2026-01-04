@@ -1,7 +1,7 @@
-import { format, startOfWeek, endOfWeek, subDays, addDays } from 'date-fns'
+import { format, endOfWeek } from 'date-fns'
 import type { TimeEntry, Task } from '../../types'
 import { TaskStatus } from '../../enums'
-import { formatTime, formatDate, minutesToHours } from './timeUtils'
+import { formatTime, minutesToHours } from './timeUtils'
 
 // ============================================================================
 // REPORT 1: Hours Completed Report

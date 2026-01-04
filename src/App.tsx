@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { TimeTracker } from './components/time-tracking'
 import { TaskForm, TaskList, TaskFilters } from './components/task-tracking'
 import { ReportGenerator } from './components/reporting'
-import { InvoiceGenerator } from './components/invoices'
 import { FileText, Clock, DollarSign } from 'lucide-react'
 
 type Tab = 'tracking' | 'reports' | 'invoices'

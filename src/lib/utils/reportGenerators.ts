@@ -1,7 +1,7 @@
 import { format, endOfWeek } from 'date-fns'
 import type { TimeEntry, Task } from '../../types'
 import { TaskStatus } from '../../enums'
-import { formatTime, minutesToHours } from './timeUtils'
+import { formatTime, minutesToHours, splitTimeRangeByBreaks, calculateDuration } from './timeUtils'
 
 // ============================================================================
 // REPORT 1: Hours Completed Report
@@ -23,13 +23,24 @@ export function generateHoursReport(data: HoursReportData): string {
   const dateHeader = `Hours Completed (${format(date, 'EEEE MMM d, yyyy')})`
 
   const timeBlocks = entries.map(entry => {
-    const start = formatTime(entry.clockInTime)
-    const end = entry.clockOutTime ? formatTime(entry.clockOutTime) : 'In Progress'
-    const duration = entry.clockOutTime
-      ? `${minutesToHours(entry.totalDuration - entry.breakDuration)} hours`
-      : 'In Progress'
+    const segments = splitTimeRangeByBreaks(entry)
 
-    return `${start} - ${end} (${duration})`
+    if (segments.length === 1) {
+      const start = formatTime(segments[0].start)
+      const end = entry.clockOutTime ? formatTime(segments[0].end) : 'In Progress'
+      const duration = entry.clockOutTime
+        ? `${minutesToHours(entry.totalDuration - entry.breakDuration)} hours`
+        : 'In Progress'
+      return `${start} - ${end} (${duration})`
+    }
+
+    const timeRanges = segments.map(seg => {
+      const segDuration = minutesToHours(calculateDuration(seg.start, seg.end))
+      const segDurationText = segDuration === 1 ? 'hour' : 'hours'
+      return `${formatTime(seg.start)} - ${formatTime(seg.end)} (${segDuration} ${segDurationText})`
+    }).join('\n')
+
+    return timeRanges
   }).join('\n')
 
   const total = `Total Hours: ${totalHours.toFixed(1)} Hours`

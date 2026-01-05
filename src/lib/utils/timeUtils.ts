@@ -120,6 +120,54 @@ export function groupEntriesByDate(entries: TimeEntry[]): Record<string, TimeEnt
 }
 
 /**
+ * Split a time entry into segments based on breaks
+ * Returns an array of time segments (start/end pairs) that exclude break periods
+ */
+export interface TimeSegment {
+  start: Date
+  end: Date
+}
+
+export function splitTimeRangeByBreaks(entry: TimeEntry): TimeSegment[] {
+  if (!entry.clockOutTime) {
+    return [{ start: entry.clockInTime, end: new Date() }]
+  }
+
+  const completedBreaks = entry.breaks.filter(brk => brk.endTime !== null)
+  if (completedBreaks.length === 0) {
+    return [{ start: entry.clockInTime, end: entry.clockOutTime }]
+  }
+
+  const sortedBreaks = [...completedBreaks].sort(
+    (a, b) => a.startTime.getTime() - b.startTime.getTime()
+  )
+
+  const segments: TimeSegment[] = []
+  let currentStart = entry.clockInTime
+
+  for (const brk of sortedBreaks) {
+    if (brk.startTime > entry.clockInTime && brk.endTime! <= entry.clockOutTime) {
+      if (currentStart < brk.startTime) {
+        segments.push({
+          start: currentStart,
+          end: brk.startTime
+        })
+      }
+      currentStart = brk.endTime!
+    }
+  }
+
+  if (currentStart < entry.clockOutTime) {
+    segments.push({
+      start: currentStart,
+      end: entry.clockOutTime
+    })
+  }
+
+  return segments
+}
+
+/**
  * Validate time entry data
  */
 export function validateTimeEntry(entry: Partial<TimeEntry>): string[] {
